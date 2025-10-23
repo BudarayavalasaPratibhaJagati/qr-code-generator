@@ -11,9 +11,19 @@ env:
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
+
+      # --- Diagnostics: verify secrets exist ---
+      - name: Verify secrets exist
+        run: |
+          if [ -z "${{ secrets.DOCKERHUB_USERNAME }}" ]; then
+            echo "::error::Missing secret DOCKERHUB_USERNAME"; exit 1; fi
+          if [ -z "${{ secrets.DOCKERHUB_TOKEN }}" ]; then
+            echo "::error::Missing secret DOCKERHUB_TOKEN"; exit 1; fi
+          echo "Secrets present ✔"
 
       - name: Log in to Docker Hub
         uses: docker/login-action@v3
